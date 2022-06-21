@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="menteeSchedules">
+
+	<!-- 2020-07-30 -->
+	<insert id="insertMenteeSchedules" parameterType="MenteeSchedule">
+		INSERT INTO mentee_schedules(mentee_schedule_no, start_date, course_no, regdate)
+		VALUES(mentee_schedules_seq.nextval, #{startDate}, courses_seq.currval, systimestamp)
+	</insert>
+
+	<select id="selectMenteeSchedules" parameterType="MenteeSchedule" resultType="MenteeSchedule">
+		SELECT mentee_schedule_no menteeScheduleNo, start_date startDate, course_no courseNo, regdate, rownum num
+		FROM mentee_schedules
+		WHERE course_no = (SELECT course_no
+						   FROM courses
+						   WHERE member_no = #{memberNo}
+						   AND course_no = #{courseNo})
+		ORDER BY 2
+	</select>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tags">
+
+	<!-- 2020-08-10 민겸-->
+	<select id="selectList" resultType="Tag">
+		SELECT t.tag tag, lt.lesson_no lessonNo
+		FROM lesson_tags lt, tags t
+		WHERE lt.tag_no=t.tag_no AND lt.lesson_no=#{lessonNo}
+	</select>
+
+
+	<!-- 0810 -->
+	<insert id="insertTags" parameterType="String">
+		INSERT INTO tags(tag_no,tag,regdate,category_no)
+		VALUES(tags_seq.nextval,#{tag},systimestamp,null)
+	</insert>
+
+	<insert id="insertLessonTag">
+		INSERT INTO lesson_tags(lesson_tags_no,regdate,tag_no,lesson_no)
+		VALUES(lesson_tags_seq.nextval,systimestamp,tags_seq.CURRVAL,lessons_seq.CURRVAL)
+	</insert>
+
+	<!-- 2020-07-31 -->
+	<select id="selectTagList" parameterType="String" resultType="Tag">
+		SELECT tag_no tagNo, tag, regdate, category_no categoryNo, rownum r
+		FROM tags
+		WHERE tag LIKE '%'||#{keyword}||'%'
+	</select>
+
+</mapper>

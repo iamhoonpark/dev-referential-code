@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lessons">
+
+
+	<!-- 2020-08-09 lessonCardList 검색 -->
+	<select id="selectLessonCard" resultType="Lesson" parameterType="CheckRule">
+	
+		SELECT DISTINCT l.type type,l.lessonNo lessonNo, l.thumbnail thumnail, l.title title, l.price price, l.PERSONNEL personnel, l.gungu gungu , l.sido sido, l.guNo guNo, l.gunNo gunNo, NVL(r.avgScore,0) avgScore, NVL(r.sumReview,0) sumReview, l.regdate regdate
+		FROM
+		
+		(select l.lessonNo, l.thumbnail thumbnail, l.title title, l.price price, l.PERSONNEL personnel, l.address gungu , l2.gu sido, l.addressNo gunNo, l2.guNo guNo, l.type type, l.regdate regdate
+		from
+			(select l.lessonNo lessonNo, l.thumbnail thumbnail, l.title title, l.addressNo addressNo, l.price price, l.PERSONNEL personnel, l.type type, l2.address address, l2.sido sido, l.regdate regdate
+			from
+				(select lesson_no lessonNo, thumbnail, title title, address_no addressNo, price price, PERSONNEL personnel, status status, type type, regdate regdate
+				
+				from lessons WHERE status = 'O'
+				<if test='categoryNos != null and categoryNos != ""'>
+					AND category_no IN (${categoryNos})
+				</if>
+				) l, location l2
+			WHERE l.addressNo = l2.address_no) l,
+		
+			(select l.address gu, l.address_no guNo, a.address gun, a.addressNo gunNo 
+			from
+				(select address_no, address from location l) l,		
+				(select sido, address, address_no addressNo	from location a) a
+			WHERE l.address_no=a.sido) l2
+		WHERE l.sido = l2.guno) l,
+		
+		
+		(SELECT l.lesson_no lessonNo, round(avg(r.score)) avgScore, count(r.review_no) sumReview
+		FROM courses c, lessons l, reviews r
+		WHERE c.lesson_no=l.lesson_no AND r.course_no=c.course_no
+		group by l.lesson_no) r
+ 	
+		WHERE l.lessonNo=r.lessonNo(+)
+		<choose>
+		<when test='sidoNos != null and sidoNos !=""'>
+			AND l.guNo IN ('${sidoNos}')
+		</when>
+		<when test='gunguNos != null and gunguNos !=""'>
+			AND l.gunNo IN (${gunguNos})
+		</when>
+		<when test="price == 1">
+			<![CDATA[ AND l.price <=10000 ]]>
+		</when>	
+		<when test="price == 2">
+			<![CDATA[ AND l.price <=20000 ]]>
+		</when>	
+		<when test="price == 3">
+			<![CDATA[ AND l.price <=30000 ]]>
+		</when>	
+		<when test="price == 4">
+			<![CDATA[ AND l.price <=40000 ]]>
+		</when>	
+		<when test="price == 5">
+			<![CDATA[ AND l.price >=50000 ]]>
+		</when>	
+		<when test="type != null and type !=''">
+			<![CDATA[ AND l.personnel IN (${type}) AND l.type IN(${type}) ]]>
+		</when>	
+		<when test="order == 1">
+			ORDER BY l.regdate DESC
+		</when>
+		<when test="order == 2">
+			ORDER BY l.price ASC
+		</when>
+		<when test="order == 3">
+			ORDER BY l.price DESC
+		</when>
+		<when test="order == 4">
+			ORDER BY sumReview DESC
+		</when>
+		<when test="order == 5">
+			ORDER BY avgScore DESC
+		</when>
+		<otherwise>
+			ORDER BY l.regdate DESC
+		</otherwise>
+		</choose>
+				
+	</select>
+
+	<!-- 2020-08-07 Ajax용 카테고리 검색-->
+	<select id="selectCategoryNo" parameterType="int" resultType="Category">
+		SELECT category_no categoryNo, name
+		FROM category
+		WHERE upper_category=#{categoryNo}
+	</select>
+
+	<!-- 2020-08-11 주영 -->
+	<!-- 내 수업목록 달력 selectList -->
+	<select id="selectMyLessonsSchedules" resultType="Lesson" parameterType="int">
+		SELECT l.LESSON_NO lessonNo,type,title,PERSONNEL,MIN_PERSONNEL minPersonnel,MAX_PERSONNEL maxPersonnel,PRICE,ROUND_HOUR roundHour,ROUND,
+				DETAIL_ADDRESS detailAddress,MESSAGE,INTRODUCTION,TARGET,l.STATUS status,CATEGORY_NO categoryNo,l.MEMBER_NO memberNo,ADDRESS_NO addressNo,
+				THUMBNAIL thumnail,s.start_date startTimestamp, c.status courseStatus
+		FROM lessons l, courses c, mentee_schedules s
+		WHERE l.member_no = #{memberNo}
+		AND l.status = 'O'
+		AND c.course_no = s.course_no
+		AND l.lesson_no = c.lesson_no
+	</select>
+
+	<!-- 2020-08-09 주영 -->
+	<!-- 내 수업목록 selectTotal -->
+	<select id="selectTotalMyLessons" parameterType="Lesson" resultType="int">
+		SELECT count(*)
+		FROM(SELECT member_no memberNo, lesson_no lessonNo, status, thumbnail thumnail, title, personnel, price, 
+				l.address_no addressNo, category_no categoryNo, lo2.address sido, lo.address gungu, l.regdate regdate
+			FROM lessons l, location lo, location lo2
+			WHERE member_no = #{memberNo} 
+			AND l.address_no = lo.address_no
+			AND lo.sido = lo2.address_no
+			AND status = #{status})
+	</select>
+
+	<!-- 2020-08-09 주영 -->
+	<!-- 내 수업목록 selectList -->
+	<select id="selectMyLessons" parameterType="PageVO" resultType="Lesson">
+		SELECT memberNo, lessonNo, status, thumnail, title, personnel, price, addressNo, categoryNo, sido, gungu, regdate
+		FROM (SELECT memberNo, lessonNo, status, thumnail, title, personnel, price, addressNo, categoryNo, sido, gungu, regdate, rownum r
+		FROM (SELECT member_no memberNo, lesson_no lessonNo, status, thumbnail thumnail, title, personnel, price, 
+					l.address_no addressNo, category_no categoryNo, lo2.address sido, lo.address gungu, l.regdate regdate
+				FROM lessons l, location lo, location lo2
+				WHERE member_no = #{no}
+				AND l.address_no = lo.address_no
+				AND lo.sido = lo2.address_no
+				AND status = #{status}
+		ORDER BY l.regdate DESC))
+		WHERE r BETWEEN #{start} AND #{end}
+	</select>	
+
+	<!-- 2020-08-07 주영 -->
+	<!-- 내 수강목록 selectTotal -->
+	<select id="selectTotalMyActivity" parameterType="Lesson" resultType="int">
+		SELECT count(*)
+		FROM members m, courses c, lessons l
+		WHERE m.member_no = c.member_no 
+		AND c.lesson_no = l.lesson_no 
+		AND m.member_no = #{memberNo}
+		<choose>
+			<when test='courseStatus=="R"'>
+				AND c.status IN('RI', 'RC')
+			</when>
+			<when test='courseStatus=="CI"'>
+				AND c.status = 'CI'
+			</when>
+			<when test='courseStatus=="CC"'>
+				AND c.status = 'CC'
+			</when>
+			<otherwise>
+				
+			</otherwise>
+		</choose>
+	</select>
+
+	<!-- 2020-08-07 주영 -->
+	<!-- 내 수강목록 달력 selectList -->
+	<select id="selectMyActivitySchedules" resultType="Lesson" parameterType="int">
+		SELECT m.member_no memberNo, c.course_no courseNo, l.lesson_no lessonNo, l.title title, l.type type, 
+				l.personnel personnel, l.price price, l.thumbnail thumnail, l.address_no addressNo, c.status courseStatus, s.start_date startTimestamp
+		FROM members m, courses c, lessons l, mentee_schedules s
+		WHERE m.member_no = c.member_no 
+		AND c.lesson_no = l.lesson_no 
+		AND m.member_no = #{no}
+		AND c.course_no = s.course_no
+	</select>
+	
+	<!-- 2020-08-07 수정됨 주영 -->
+	<!-- 내 수강목록 selectList -->
+	<select id="selectListMyActivity" resultType="Lesson" parameterType="PageVO">
+		SELECT memberNo, courseNo, lessonNo, title, type, personnel, price, thumnail, addressNo, courseStatus, sido, gungu, regdate
+		FROM (SELECT memberNo, courseNo, lessonNo, title, type, personnel, price, thumnail, addressNo, courseStatus, sido, gungu, regdate, rownum r
+			FROM (SELECT m.member_no memberNo, c.course_no courseNo, l.lesson_no lessonNo, l.title title, l.type type, l.personnel personnel, l.price price, 
+						l.thumbnail thumnail, l.address_no addressNo, c.status courseStatus, lo2.address sido, lo.address gungu, l.regdate regdate
+				FROM members m, courses c, lessons l, location lo, location lo2
+				WHERE m.member_no = c.member_no 
+				AND c.lesson_no = l.lesson_no 
+				AND m.member_no = #{no}
+				AND l.address_no = lo.address_no
+				AND lo.sido = lo2.address_no
+				<choose>
+					<when test='courseStatus=="R"'>
+						AND c.status IN('RI', 'RC')
+					</when>
+					<when test='courseStatus=="CI"'>
+						AND c.status = 'CI'
+					</when>
+					<when test='courseStatus=="CC"'>
+						AND c.status = 'CC'
+					</when>
+					<otherwise>
+						
+					</otherwise>
+				</choose>	
+				ORDER BY 2 DESC))
+		WHERE r BETWEEN #{start} AND #{end}
+	</select>
+
+	<!-- 0809 -->
+	<insert id="insertLesson" parameterType="Lesson">
+	<selectKey order="BEFORE" keyProperty="lessonNo" resultType="int">
+		SELECT lessons_seq.nextval
+		FROM dual
+	</selectKey>
+		INSERT INTO lessons(lesson_no, type, title, personnel, min_personnel, 
+		max_personnel, price, round_hour, round, detail_address, message, introduction, 
+		target, status, category_no, member_no, address_no, thumbnail, regdate)
+		VALUES(#{lessonNo},#{type},#{title},#{personnel},#{minPersonnel},
+		#{maxPersonnel},#{price},#{roundHour},#{round},#{detailAddress},#{message},
+		#{introduction},#{target},'O',#{categoryNo},#{memberNo},#{addressNo},
+		#{thumnail},systimestamp)
+	</insert>
+
+	<!-- 2020-08-02 -->
+	<select id="selectCountOpenLessons" parameterType="int" resultType="int">
+		SELECT COUNT(*)
+		FROM lessons
+		WHERE member_no = #{memberNo}
+		AND status = 'O'
+	</select>
+
+	<!-- 
+	<select id="selectListMyActivity" resultType="Lesson" parameterType="int">
+		SELECT l.lesson_no lessonNo, l.title, l.personnel, l.price, l.thumbnail thumnail, l.address_no addressNo, c.status status
+		FROM members m, courses c, lessons l
+		WHERE m.member_no = c.member_no and c.lesson_no = l.lesson_no and m.member_no = #{memberNo}
+	</select> -->
+
+	<!-- 2020-07-29 -->
+	<select id="selectLessonByLessonNo" parameterType="int" resultType="Lesson">
+		SELECT LESSON_NO lessonNo,TYPE,TITLE,PERSONNEL,MIN_PERSONNEL minPersonnel,MAX_PERSONNEL maxPersonnel,PRICE,ROUND_HOUR roundHour,ROUND,
+			DETAIL_ADDRESS detailAddress,MESSAGE,INTRODUCTION,TARGET,STATUS,CATEGORY_NO categoryNo,MEMBER_NO memberNo,ADDRESS_NO addressNo,THUMBNAIL,REGDATE
+		FROM lessons
+		WHERE lesson_no = #{lessonNo}
+	</select>
+
+	<!-- 2020-07-29 -->
+	<update id="lessonStatusUpdate" parameterType="Lesson">
+		UPDATE lessons
+		SET status = #{status}
+		WHERE lesson_no = #{lessonNo}
+	</update>
+	
+	<select id="selectLessonStatus" parameterType="int" resultType="String">
+		SELECT status
+		FROM lessons
+		WHERE lesson_no = #{lessonNo}
+	</select>
+
+	<!-- 2020-07-28 -->
+	<select id="selectLessonList" parameterType="int" resultType="Lesson">
+		SELECT lesson_no lessonNo, type, title, personnel,
+		       min_personnel minPersonnel, max_personnel maxPersonnel, price,
+		       round_hour roundHour, round, detail_address detailAddress,
+		       message, introduction, target, status, category_no categoryNo, member_no memberNo,
+		       address_no addressNo, thumbnail thumnail, regdate
+		FROM lessons 
+		WHERE lesson_no = #{lessonNo}
+	</select>
+
+	<!-- 2020-07-25 -->
+	<select id="selectLessonThemeListOrderCategory" resultType="Lesson">
+		SELECT lessonNo, title, personnel, price, thumnail, addressNo, r
+		FROM (SELECT lessonNo, title, personnel, price, thumnail, addressNo, rownum r
+			  FROM (SELECT lesson_no lessonNo, title, thumbnail thumnail,
+		             	   personnel, price, address_no addressNo
+			  	    FROM lessons
+					WHERE category_no = (SELECT category_no
+										 FROM category
+										 WHERE name = '호신술/무술')
+		      ORDER BY title))
+		WHERE r BETWEEN 1 AND 8
+	</select>
+	
+	<select id="selectLessonThemeListOrderWinter" resultType="Lesson">
+		SELECT lessonNo, title, personnel, price, thumnail, addressNo, r
+		FROM (SELECT lessonNo, title, personnel, price, thumnail, addressNo, rownum r
+			  FROM (SELECT l.lesson_no lessonNo, l.title title, l.thumbnail thumnail,
+		             	   l.personnel personnel, l.price price, l.address_no addressNo
+			  	    FROM lessons l, (SELECT l.lesson_no lessonNo
+									 FROM lesson_tags l, (SELECT tag, tag_no
+														  FROM tags
+									 					  WHERE tag LIKE '%겨울%') t
+									 WHERE t.tag_no = l.tag_no
+									 GROUP BY l.lesson_no) t
+					WHERE l.lesson_no = t.lessonNo
+					ORDER BY title ))
+		WHERE r BETWEEN 1 AND 8
+	</select>
+	
+	<select id="selectLessonThemeListOrderAutumn" resultType="Lesson">
+		SELECT lessonNo, title, personnel, price, thumnail, addressNo, r
+		FROM (SELECT lessonNo, title, personnel, price, thumnail, addressNo, rownum r
+			  FROM (SELECT l.lesson_no lessonNo, l.title title, l.thumbnail thumnail,
+		             	   l.personnel personnel, l.price price, l.address_no addressNo
+			  	    FROM lessons l, (SELECT l.lesson_no lessonNo
+									 FROM lesson_tags l, (SELECT tag, tag_no
+														  FROM tags
+									 					  WHERE tag LIKE '%가을%') t
+									 WHERE t.tag_no = l.tag_no
+									 GROUP BY l.lesson_no) t
+					WHERE l.lesson_no = t.lessonNo
+					ORDER BY title ))
+		WHERE r BETWEEN 1 AND 8
+	</select>
+	
+	<select id="selectLessonThemeListOrderSummer" resultType="Lesson">
+		SELECT lessonNo, title, personnel, price, thumnail, addressNo, r
+		FROM (SELECT lessonNo, title, personnel, price, thumnail, addressNo, rownum r
+			  FROM (SELECT l.lesson_no lessonNo, l.title title, l.thumbnail thumnail,
+		             	   l.personnel personnel, l.price price, l.address_no addressNo
+			  	    FROM lessons l, (SELECT l.lesson_no lessonNo
+									 FROM lesson_tags l, (SELECT tag, tag_no
+														  FROM tags
+									 					  WHERE tag LIKE '%여름%') t
+									 WHERE t.tag_no = l.tag_no
+									 GROUP BY l.lesson_no) t
+					WHERE l.lesson_no = t.lessonNo
+					ORDER BY title ))
+		WHERE r BETWEEN 1 AND 8
+	</select>
+	
+	<select id="selectLessonThemeListOrderSpring" resultType="Lesson">
+		SELECT lessonNo, title, personnel, price, thumnail, addressNo, r
+		FROM (SELECT lessonNo, title, personnel, price, thumnail, addressNo, rownum r
+			  FROM (SELECT l.lesson_no lessonNo, l.title title, l.thumbnail thumnail,
+		             	   l.personnel personnel, l.price price, l.address_no addressNo
+			  	    FROM lessons l, (SELECT l.lesson_no lessonNo
+									 FROM lesson_tags l, (SELECT tag, tag_no
+														  FROM tags
+									 					  WHERE tag LIKE '%봄%') t
+									 WHERE t.tag_no = l.tag_no
+									 GROUP BY l.lesson_no) t
+					WHERE l.lesson_no = t.lessonNo
+					ORDER BY title ))
+		WHERE r BETWEEN 1 AND 8
+	</select>
+	
+	<select id="selectLessonThemeListOrderTag" resultType="Lesson">
+		SELECT lessonNo, title, personnel, price, thumnail, addressNo, r
+		FROM (SELECT lessonNo, title, personnel, price, thumnail, addressNo, rownum r
+			  FROM (SELECT l.lesson_no lessonNo, l.title title, l.thumbnail thumnail,
+		             	   l.personnel personnel, l.price price, l.address_no addressNo
+			  	    FROM lessons l, (SELECT l.lesson_no lessonNo
+									 FROM lesson_tags l, (SELECT tag, tag_no
+														  FROM tags
+									 					  WHERE tag LIKE '%데이트%') t
+									 WHERE t.tag_no = l.tag_no
+									 GROUP BY l.lesson_no) t
+					WHERE l.lesson_no = t.lessonNo
+					ORDER BY title ))
+		WHERE r BETWEEN 1 AND 8
+	</select>
+	
+	<select id="selectLessonThemeListOrderLike" resultType="Lesson">
+		SELECT lessonNo, title, personnel, price, thumnail, addressNo, likeCount, r
+		FROM (SELECT lessonNo, title, personnel, price, thumnail, addressNo, likeCount, rownum r
+			  FROM (SELECT l.lesson_no lessonNo, l.title title, l.thumbnail thumnail, l.address_no addressNo,
+		             	   l.personnel personnel, l.price price, w.likeCount likeCount
+			  	    FROM lessons l, (SELECT lesson_no lessonNo, count(*) likeCount
+					     	   	     FROM wishlist
+						 	   		 GROUP BY lesson_no) w
+									 WHERE l.lesson_no = w.lessonNo
+									 ORDER BY likeCount DESC, title ))
+		WHERE r BETWEEN 1 AND 8
+	</select>
+
+	<!-- 수정 필요함 -->
+	<select id="selectCourseLessonByNo" parameterType="Lesson" resultType="Lesson">
+		SELECT l.lesson_no lessonNo, l.type type, l.title title, l.personnel personnel,
+		       l.min_personnel minPersonnel, l.max_personnel maxPersonnel,
+		       l.price price, l.round_hour roundHour, l.round round,
+		       l.detail_address detailAddress, l.message message,
+		       l.introduction introduction, l.target target,
+		       l.status status, l.category_no categoryNo, l.member_no memberNo,
+		       l.address_no addressNo, l.thumbnail thumbnail, c.regdate regdate,
+		       t.nickname nickname, t.profile_img profileImg
+		FROM lessons l, mentors t, courses c
+		WHERE l.member_no = t.member_no
+		AND l.lesson_no = c.lesson_no
+		AND l.lesson_no = (SELECT lesson_no
+						   FROM courses
+						   WHERE member_no = #{memberNo}
+						   AND course_no = #{courseCurrval})
+		AND c.course_no = #{courseNo}
+	</select>
+	
+		
+	<!-- 2020-08-11 동범 멘토별 레슨카드 -->
+	<select id="selectLessonsByMentor" parameterType="int" resultType="Lesson">
+		SELECT la.title, la.price, la.round, la.address, la.thumbnail thumnail, l.address sido, la.lesson_no lessonNo, la.personnel, la.member_no memberNo
+		FROM(SELECT *
+			FROM lessons l, location a
+			WHERE l.address_no = a.address_no
+			AND member_no = #{memberNo}) la, (SELECT address, address_no
+									FROM location) l
+		WHERE la.sido = l.address_no
+	</select>
+</mapper>

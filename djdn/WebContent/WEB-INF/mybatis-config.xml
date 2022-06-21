@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC
+"-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	
+	<!-- 자바에 있는 NULL값을 오라클 DB에 넣을 수 있게 만드는 설정
+		 (NULL값이 들어갈 수 있도록 세팅) -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	
+	<!-- alias설정 -->
+	<typeAliases>
+		<typeAlias alias="Mentor" type="com.jbp.djdn.vo.Mentor"/>
+		<typeAlias alias="Member" type="com.jbp.djdn.vo.Member"/>
+		<typeAlias alias="Course" type="com.jbp.djdn.vo.Course"/>
+		<typeAlias alias="Review" type="com.jbp.djdn.vo.Review"/>
+		<typeAlias alias="ReviewImg" type="com.jbp.djdn.vo.ReviewImg"/>
+		<typeAlias alias="Agreement" type="com.jbp.djdn.vo.Agreement"/>
+		<typeAlias alias="Lesson" type="com.jbp.djdn.vo.Lesson"/>
+		<typeAlias alias="Location" type="com.jbp.djdn.vo.Location"/>
+		<typeAlias alias="MenteeSchedule" type="com.jbp.djdn.vo.MenteeSchedule"/>
+		<typeAlias alias="PageVO" type="com.jbp.djdn.vo.PageVO"/>
+		<typeAlias alias="Tag" type="com.jbp.djdn.vo.Tag"/>
+		<typeAlias alias="LessonTag" type="com.jbp.djdn.vo.LessonTag"/>
+		<typeAlias alias="Refund" type="com.jbp.djdn.vo.Refund"/>
+		<typeAlias alias="Wishlist" type="com.jbp.djdn.vo.Wishlist"/>
+		<typeAlias alias="Category" type="com.jbp.djdn.vo.Category"/>
+		<typeAlias alias="LessonImg" type="com.jbp.djdn.vo.LessonImg"/>
+		<typeAlias alias="Curriculum" type="com.jbp.djdn.vo.Curriculum"/>
+		<typeAlias alias="Sample" type="com.jbp.djdn.vo.Sample"/>
+		<typeAlias alias="MentorSchedule" type="com.jbp.djdn.vo.MentorSchedule"/>
+		<typeAlias alias="Blacklist" type="com.jbp.djdn.vo.Blacklist"/>
+		<typeAlias alias="CheckRule" type="com.jbp.djdn.vo.CheckRule"/>
+		<typeAlias alias="Appeal" type="com.jbp.djdn.vo.Appeal"/>
+		<typeAlias alias="Dropout" type="com.jbp.djdn.vo.Dropout"/>
+		<typeAlias alias="Background" type="com.jbp.djdn.vo.Background"/>
+		<typeAlias alias="Dropout" type="com.jbp.djdn.vo.Dropout"/>
+		<typeAlias alias="Career" type="com.jbp.djdn.vo.Career"/>
+		<typeAlias alias="Certificate" type="com.jbp.djdn.vo.Certificate"/>
+		
+		<!-- 
+		<typeAlias alias="Bank" type="com.jbp.djdn.vo.Bank"/>
+		<typeAlias alias="BlackReason" type="com.jbp.djdn.vo.BlackReason"/>
+		<typeAlias alias="DropoutReason" type="com.jbp.djdn.vo.DropoutReason"/>
+		<typeAlias alias="RefundReason" type="com.jbp.djdn.vo.RefundReason"/> -->
+	</typeAliases>
+	
+	<!-- 맵퍼파일의 경로 설정 -->
+	<mappers>
+		<mapper resource="com/jbp/djdn/mapper/mentors.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/members.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/courses.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/reviews.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/reviewImgs.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/agreement.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/lessons.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/location.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/menteeSchedules.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/tags.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/lessonTags.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/refunds.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/wishlist.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/category.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/lessonImg.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/curriculums.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/samples.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/mentorSchedules.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/blacklist.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/appeal.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/dropout.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/background.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/dropout.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/careers.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/certificates.xml"/>
+		
+		<!-- 
+		<mapper resource="com/jbp/djdn/mapper/banks.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/blackReasons.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/dropoutReasons.xml"/>
+		<mapper resource="com/jbp/djdn/mapper/refundReasons.xml"/> -->
+	</mappers>
+	
+</configuration>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mentorSchedules">
+
+	<!-- 08/10 -->
+	<insert id="insertSchedules" parameterType="MentorSchedule">
+		INSERT INTO mentor_schedules(mentor_schedule_no, start_date, lesson_no, regdate)
+		VALUES(mentor_schedules_seq.nextval, #{startDate}, lessons_seq.CURRVAL, systimestamp)
+	</insert>
+
+	<!-- 2020-07-29 -->
+	<select id="selectLessonSchedulesByLessonNo" parameterType="int" resultType="MentorSchedule">
+		SELECT m.mentor_schedule_no mentorScheduleNo, m.start_date startDate,
+     		  m.lesson_no lessonNo, m.regdate, l.round_hour roundHour, rownum r
+		FROM mentor_schedules m, lessons l
+		WHERE m.lesson_no = #{lessonNo}
+		AND m.lesson_no = l.lesson_no
+		ORDER BY 2
+	</select>
+
+</mapper>

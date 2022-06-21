@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="location">
+
+	<!-- 2020-08-10 민겸 -->
+	<select id="selectGungu" resultType="Location" parameterType="int">
+		SELECT address_no addressNo, address
+		FROM location
+		WHERE sido=#{sido}
+	</select>
+	
+	<!-- 2020-08-09 민겸 -->
+	<select id="selectSido" resultType="Location">
+		SELECT address_no addressNo, address
+		FROM location
+		WHERE sido is null
+	</select>
+
+	<!-- 08/08 -->
+	<select id="selectListSidoFirst" resultType="Location">
+		SELECT address_no addressNo, address, regdate, sido
+		FROM location
+		WHERE sido IS NULL
+	</select>
+	
+	<select id="selectListSidoSecond" resultType="Location" parameterType="int">
+		SELECT address_no addressNo, address, regdate, sido
+		FROM location
+		WHERE sido = #{no}
+	</select>
+
+	<!-- 2020-07-31 -->
+	<select id="selectLocationByAddressNo" parameterType="int" resultType="Location">
+		SELECT l1.address addressSido, l2.address address
+		FROM location l1, location l2
+		WHERE l2.address_no = #{addressNo}
+		AND l2.sido = l1.address_no
+	</select>
+
+	<select id="selectLocationByLessonNo" parameterType="int" resultType="Location">
+		SELECT c.addressSido, c.address
+		FROM lessons l, (SELECT lf.address addressSido, ls.address address ,ls.address_no addressNo
+						 FROM location lf,location ls
+						 WHERE ls.sido = lf.address_no) c
+		WHERE l.address_no = c.addressNo
+		AND l.address_no = #{lessonAddressNo}
+	</select>
+
+</mapper>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="refunds">
+
+	<!-- 2020.7.24 -->
+	<!-- 환불신청 insert -->
+	<insert id="insertRefund" parameterType="Refund">
+		INSERT INTO refunds(refund_no, detail_reason, refund, member_no, course_no, refund_reason_no, regdate)
+		VALUES(refunds_seq.nextval, #{detailReason}, #{refund}, #{memberNo}, #{courseNo}, #{refundReasonNo}, systimestamp)
+	</insert>
+
+</mapper>

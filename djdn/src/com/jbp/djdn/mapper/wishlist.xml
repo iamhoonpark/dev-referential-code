@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wishlist">
+
+	<!--2020.07.30 -->
+	<select id="selectWishlistTotal" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM wishlist
+		WHERE member_no=#{no}
+	</select>
+
+	<select id="selectWishList" parameterType="PageVO" resultType="Lesson">
+		SELECT lessonNo, thumnail,title,price,personnel,wishlistNo,menteeNo,gungu,sido
+		FROM(SELECT lessonNo, thumnail,title,price,personnel,wishlistNo,menteeNo,gungu,sido,rownum r
+			 FROM(SELECT l.lesson_no lessonNo, thumbnail thumnail, title, price, personnel, wishlist_no wishlistNo, w.member_no menteeNo, lo.address gungu, lo2.address sido
+				  FROM lessons l, location lo, location lo2, wishlist w
+				  WHERE w.member_no = #{no}
+				  and w.lesson_no = l.lesson_no
+				  and l.address_no = lo.address_no
+				  and lo.sido = lo2.address_no
+				  order by 1 asc))
+		WHERE r between #{start} and #{end}
+	</select>
+	
+	<select id="selectReviewByLessonNo" parameterType="int" >
+		select AVG(score),COUNT(review_no) count
+		from reviews
+		where course_no = (select c.course_no
+							from courses c,lessons l
+							where c.lesson_no = l.lesson_no
+							AND c.lesson_no lessonNo = #{lessonNo})
+	</select>
+	
+	<delete id="deleteWishlist" parameterType="Wishlist">
+		DELETE FROM (SELECT wishlist_no wishlistNo, member_no memberNo
+		  		 	 FROM wishlist
+		  		 	 WHERE member_no = #{memberNo})
+		WHERE wishlistNo = #{wishlistNo}
+	</delete>
+
+	<!-- 2020-07-29 -->
+	<select id="selectWishlistCount" parameterType="int" resultType="int">
+		SELECT COUNT(*)
+		FROM wishlist
+		WHERE lesson_no = #{lessonNo}
+	</select>
+
+	<!-- 2020-07-27 -->
+	<delete id="deleteLike" parameterType="Wishlist">
+		DELETE FROM wishlist
+		WHERE member_no = #{memberNo}
+		AND lesson_no = #{lessonNo}
+	</delete>
+	
+	<select id="selectLike" parameterType="Wishlist" resultType="Wishlist">
+		SELECT wishlist_no wishlistNo, member_no memberNo, lesson_no lessonNo, regdate
+		FROM wishlist
+		WHERE member_no = #{memberNo}
+		AND lesson_no = #{lessonNo}
+	</select>
+	
+	<insert id="insertLike" parameterType="Wishlist">
+		INSERT INTO wishlist(wishlist_no, member_no, lesson_no, regdate)
+		VALUES(wishlist_seq.nextval, #{memberNo}, #{lessonNo}, systimestamp)
+	</insert>
+
+</mapper>

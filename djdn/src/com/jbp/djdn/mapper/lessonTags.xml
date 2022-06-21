@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lessonTags">
+
+	<!-- 2020-08-09 주영 -->
+	<select id="selectLessonTagsByLessonNo" parameterType="int" resultType="LessonTag">
+		SELECT l.lesson_no lessonNo, lt.lesson_tags_no lessonTagsNo, t.tag_no tagNo, t.tag tag
+		FROM lessons l, lesson_tags lt, tags t
+		WHERE l.lesson_no = lt.lesson_no
+		AND lt.tag_no = t.tag_no
+		AND l.lesson_no = #{lessonNo}
+	</select>	
+
+	<!-- 2020-08-08 수정됨 주영 -->
+	<select id="selectLessonTagsByMemberNo" parameterType="int" resultType="LessonTag">
+		SELECT t.tag
+		FROM (SELECT m.member_no memberNo, c.course_no courseNo, l.lesson_no lessonNo, l.title title, l.type type, l.personnel personnel, l.price price, l.thumbnail thumnail, l.address_no addressNo, c.status status
+			  FROM members m, courses c, lessons l
+			  WHERE m.member_no = c.member_no 
+			  AND c.lesson_no = l.lesson_no 
+			  AND m.member_no = #{no}) l,
+			 (SELECT t.tag, lt.lesson_no lessonNo
+			  FROM lesson_tags lt, tags t
+		WHERE lt.tag_no=t.tag_no) t
+		WHERE l.lessonNo=t.lessonNo
+	</select>
+
+	<!-- 2020-07-25 -->
+	<select id="selectLessonThemeTags" parameterType="int" resultType="LessonTag">
+		SELECT t.tag tag
+		FROM tags t, lesson_tags l
+		WHERE t.tag_no = l.tag_no
+		AND lesson_no = #{lessonNo}
+	</select>
+	
+</mapper>

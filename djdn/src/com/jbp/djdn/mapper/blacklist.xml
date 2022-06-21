@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="blacklist">
+
+	<!-- 2020-07-30 -->
+	<!-- 블랙리스트 삭제 (차단해제) -->
+	<delete id="deleteBlacklist" parameterType="int">
+		DELETE blacklist
+		WHERE blacklist_no = #{blacklistNo}
+	</delete>
+
+	<!-- 2020-07-30 -->
+	<!-- 페이징처리용 selectTotal -->
+	<select id="selectTotalBlacklist" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM (SELECT l.lesson_no lessonNo, l.member_no mentorNo, title, blacklist_no blacklistNo, b.black_reason_no blackReasonNo, 
+					detail_reason detailReason, b.regdate regdate, m.member_no menteeNo, name, profile_img profileImg, r.reason reason
+			FROM (SELECT lesson_no, member_no, title
+					FROM lessons 
+					WHERE member_no= #{memberNo}) l, blacklist b, members m, black_reasons r
+			WHERE l.lesson_no = b.lesson_no
+			AND b.member_no = m.member_no
+			AND b.black_reason_no = r.black_reason_no
+			ORDER BY regdate DESC)
+	</select>
+
+	<!-- 2020-07-30 -->
+	<!-- 블랙리스트 목록 -->
+	<select id="selectBlacklist" parameterType="PageVO" resultType="Blacklist">
+		SELECT lessonNo, mentorNo, title, blacklistNo, blackReasonNo, 
+				detailReason, regdate, menteeNo, name, profileImg, reason
+		FROM (SELECT l.lesson_no lessonNo, l.member_no mentorNo, title, blacklist_no blacklistNo, b.black_reason_no blackReasonNo, 
+					detail_reason detailReason, b.regdate regdate, m.member_no menteeNo, name, profile_img profileImg, r.reason reason, rownum r
+			FROM (SELECT lesson_no, member_no, title
+					FROM lessons 
+					WHERE member_no= #{no}) l, blacklist b, members m, black_reasons r
+			WHERE l.lesson_no = b.lesson_no
+			AND b.member_no = m.member_no
+			AND b.black_reason_no = r.black_reason_no
+			ORDER BY regdate DESC)
+		WHERE r BETWEEN #{start} AND #{end}
+	</select>
+
+	<!-- 2020-07-29 -->
+	<!-- 블랙리스트 차단 시 중복체크 -->
+	<select id="selectBlacklistCheck" parameterType="Blacklist" resultType="int">
+		SELECT count(*)
+		FROM (SELECT l.lesson_no lessonNo,TYPE,TITLE,PERSONNEL,minPersonnel,maxPersonnel,
+					PRICE,roundHour,ROUND,detailAddress,MESSAGE,INTRODUCTION,TARGET,
+					STATUS,categoryNo,l.member_no mentorNo,addressNo,THUMBNAIL, 
+					blacklist_no blacklistNo, detail_reason detailReason, 
+					b.regdate regdate, b.member_no menteeNo, black_reason_no blackReasonNo
+			FROM (SELECT lesson_no,TYPE,TITLE,PERSONNEL,MIN_PERSONNEL minPersonnel,
+						MAX_PERSONNEL maxPersonnel,PRICE,ROUND_HOUR roundHour,ROUND,
+						DETAIL_ADDRESS detailAddress,MESSAGE,INTRODUCTION,TARGET,
+						STATUS,CATEGORY_NO categoryNo,MEMBER_NO,ADDRESS_NO addressNo,THUMBNAIL 
+				FROM lessons 
+				WHERE member_no=#{mentorNo}) l, blacklist b
+			WHERE l.lesson_no = b.lesson_no)
+		WHERE menteeNo=#{menteeNo}
+	</select>
+
+	<!-- 2020.07.28 -->
+	<!-- 멘티목록 페이지에서 블랙리스트 insert -->
+	<insert id="insertBlacklist" parameterType="Blacklist">
+		INSERT INTO blacklist(BLACKLIST_NO,DETAIL_REASON,REGDATE,MEMBER_NO,LESSON_NO,BLACK_REASON_NO)
+		VALUES(blacklist_seq.nextval, #{detailReason}, systimestamp, #{memberNo}, #{lessonNo}, #{blackReasonNo})
+	</insert>
+
+</mapper>

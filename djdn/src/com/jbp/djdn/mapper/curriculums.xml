@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="curriculums">
+
+	<!-- 0810 -->
+	<insert id="insertCurriculums" parameterType="Curriculum">
+		INSERT INTO curriculums(CURRICULUM_NO,ROUND,CONTENT,LESSON_NO,REGDATE)
+		VALUES(curriculums_seq.nextval,#{number},#{content},lessons_seq.CURRVAL,systimestamp)
+	</insert>
+
+	<!-- 2020-07-29 -->
+	<select id="selectLessonCurriculums" parameterType="int" resultType="Curriculum">
+		SELECT round, content, lesson_no lessonNo
+		FROM curriculums
+		WHERE lesson_no = #{lessonNo}
+	</select>
+
+</mapper>

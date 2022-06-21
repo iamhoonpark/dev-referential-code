@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
+
+	<!-- 반드시 써야함 -->
+	<mvc:annotation-driven/>
+	
+	<bean id="multipartResolver"
+	p:defaultEncoding="UTF-8"
+	p:maxUploadSize="104857600"
+	class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+	<!-- JSPView의 경로 중 /WEB-INF/view/와 .jsp 중복방지 -->
+	<mvc:view-resolvers>
+		<mvc:jsp prefix="/WEB-INF/view/" suffix=".jsp"/>
+	</mvc:view-resolvers>
+
+	<!-- Controller 등록 -->
+	<bean p:appealService-ref="appealService"
+		  class="com.jbp.djdn.controller.AppealController"/>
+  	<!-- 2020-08-07 주영 -->
+	<bean p:blacklistService-ref="blacklistService"
+		  class="com.jbp.djdn.controller.BlacklistController"/>
+	<bean p:courseService-ref="courseService"
+		  class="com.jbp.djdn.controller.CourseController"/>
+	<bean p:lessonService-ref="lessonService"
+		  p:wishlistService-ref="wishlistService"
+		  p:categoryService-ref="categoryService"
+		  class="com.jbp.djdn.controller.LessonContoller"/>
+	<bean p:memberService-ref="memberService"
+		  class="com.jbp.djdn.controller.MemberController"/>
+	<bean p:mentorService-ref="mentorService"
+		  class="com.jbp.djdn.controller.MentorController"/>
+	<bean p:refundService-ref="refundService"
+		  class="com.jbp.djdn.controller.RefundController"/>
+	<bean p:reviewService-ref="reviewService"
+		  class="com.jbp.djdn.controller.ReviewController"/>
+	<bean p:wishlistService-ref="wishlistService"
+		  class="com.jbp.djdn.controller.WishlistController"/>
+
+
+</beans>

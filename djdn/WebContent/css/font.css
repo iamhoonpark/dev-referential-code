@@ -1,0 +1,5 @@
+@charset "UTF-8";
+
+body, input, button, select, a, h2, h3, textarea {
+    font-family: 'Noto Sans KR', sans-serif;
+}

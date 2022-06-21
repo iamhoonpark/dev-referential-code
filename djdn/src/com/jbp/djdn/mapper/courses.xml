@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="courses">
+
+	<!-- 2020-08-14 -->
+	<update id="updateCourseBystatus" parameterType="int">
+		UPDATE courses
+		SET status = 'CC'
+		WHERE course_no = #{courseNo}
+	</update>
+	
+	<select id="selectCourseByStartDate" resultType="Course">
+		SELECT c.course_no courseNo, c.status status, m.startDate
+		FROM courses c, (SELECT course_no courseNo, max(start_date) startDate
+		FROM mentee_schedules
+		GROUP BY course_no
+		ORDER BY 1) m
+		WHERE c.status = 'CI'
+		AND c.course_no = m.courseNo
+	</select>
+
+	<!-- 2020-07-30 -->
+	<select id="selectCourseCurrval" resultType="int">
+		SELECT courses_seq.currval
+		FROM dual
+	</select>
+	
+	<insert id="insertCourse" parameterType="Course">
+		INSERT INTO courses(course_no, regdate, status, mentee_level, request, payment, method, member_no, lesson_no)
+		VALUES(courses_seq.nextval, systimestamp, 'CI', #{menteeLevel}, #{request}, #{payment}, #{method}, #{memberNo}, #{lessonNo})
+	</insert>
+
+	<!-- 2020.7.28 -->
+	<!-- 멘티목록 페이지 -->
+	<select id="selectMenteeListByLessonNo" parameterType="int" resultType="Course">
+		SELECT a.courseNo courseNo, status, menteeLevel, request, payment, method, memberNo, lessonNo, 
+				name, id, pwd, nickname, email, gender, phone, profileImg, startDate
+		FROM (SELECT course_no courseNo, status, mentee_level menteeLevel, request, payment, method, c.member_no memberNo, c.lesson_no lessonNo, 
+					m.name name, id, pwd, nickname, email, gender, m.phone phone, m.profile_img profileImg
+			FROM courses c, members m
+			WHERE c.lesson_no = #{lessonNo}
+			AND m.member_no = c.member_no) a, (SELECT course_no courseNo, MIN(start_date) startDate
+											FROM mentee_schedules
+											GROUP BY course_no) s 
+		WHERE a.courseNo = s.courseNo
+		ORDER BY startDate
+	</select>
+
+	<!-- 2020.7.24 -->
+	<!-- 환불신청 시 course status 환불진행중으로 update -->
+	<update id="updateCourseStatus" parameterType="int">
+		UPDATE courses
+		SET status = 'RI'
+		WHERE course_no = #{courseNo}
+	</update>
+	
+	<!-- 2020-08-10 수정됨 -->
+	<!-- 환불신청 페이지 수업 select -->
+	<select id="selectRefund" parameterType="Course" resultType="Course">
+		SELECT COURSE_NO courseNo,c.REGDATE regdate,c.STATUS status,PAYMENT,METHOD,c.MEMBER_NO memberNo,c.LESSON_NO lessonNo, title, 
+				personnel, thumbnail, lo.address gungu, lo2.address sido
+		FROM courses c, lessons le, location lo, location lo2
+		WHERE c.course_no=(SELECT course_no 
+						FROM courses 
+						WHERE member_no=#{memberNo}
+						AND course_no=#{courseNo})
+		AND c.lesson_no = le.lesson_no
+		AND le.address_no = lo.address_no
+		AND lo.sido = lo2.address_no
+	</select>
+	
+</mapper>

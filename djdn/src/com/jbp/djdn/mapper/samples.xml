@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="samples">
+
+	<!-- 0810 -->
+	<insert id="insertUrl" parameterType="String">
+		INSERT INTO samples(sample_no,url,lesson_no,regdate)
+		VALUES(samples_seq.nextval,#{url},lessons_seq.CURRVAL,systimestamp)
+	</insert>
+
+	<!-- 2020-07-29 -->
+	<select id="selectLessonSamplesByLessonNo" parameterType="int" resultType="Sample">
+		SELECT sample_no, url, lesson_no, regdate
+		FROM samples
+		WHERE lesson_no = #{lessonNo}
+	</select>
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="lessonImg">
+
+	<insert id="insertLessonImgs" parameterType="String">
+		INSERT INTO lesson_img(lesson_img_no, name, lesson_no, regdate)
+		VALUES(lesson_img_seq.nextval, #{lessonImg},lessons_seq.CURRVAL,systimestamp)
+	</insert>
+
+	<!-- 2020-07-28 -->
+	<select id="selectLessonImgs" parameterType="int" resultType="LessonImg">
+		SELECT lesson_img_no, name, lesson_no, regdate
+		FROM lesson_img
+		WHERE lesson_no = #{lessonNo}
+		ORDER BY 1
+	</select>
+
+</mapper>

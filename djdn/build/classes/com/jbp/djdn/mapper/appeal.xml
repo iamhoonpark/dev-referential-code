@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="appeal">
+
+	<!-- 2020-08-07 강정현 수업 멘토 소개 얻기 -->
+	<select id="selectAppealIntroduction" parameterType="Appeal" resultType="Appeal">
+		SELECT appeal_no appealNo, introduction, category_no categoryNo, member_no memberNo, regdate
+		FROM appeal
+		WHERE member_no = #{memberNo}
+		AND category_no = #{categoryNo}
+	</select>
+
+	<!-- 2020-08-02 -->
+	<select id="selectAppeal" parameterType="int" resultType="Appeal">
+		SELECT appeal_no appealNo, member_no memberNo, a.category_no categoryNo, name categoryName, introduction
+		FROM appeal a, category c
+		WHERE member_no = #{memberNo}
+		AND a.category_no = c.category_no
+	</select>
+
+
+	<!-- 2020-08-10 동범 현재 appeal seq찾기 -->
+	<select id="selectAppealSeq" resultType="int">
+		select appeal_seq.nextval FROM DUAL
+	</select>	
+	
+	<!-- 2020-08-10 동범 mentorProfile data Insert -->
+	<insert id="insertMentorAppeal" parameterType="Appeal">
+		<selectKey order="BEFORE" keyProperty="appealNo" resultType="int">
+				select appeal_seq.nextval FROM DUAL	
+		</selectKey>
+		INSERT INTO appeal
+		VALUES(#{appealNo}, #{introduction}, #{categoryNo}, #{memberNo}, systimestamp)	
+	</insert>
+	
+	<select id="selectMentorAppealNo" parameterType="Mentor" resultType="int">
+		SELECT appeal_no appealNo
+		FROM category c, appeal a
+		WHERE c.category_no = a.category_no AND a.member_no = #{memberNo} AND c.name = #{categoryName} 
+	</select>
+	
+	<!-- 2020-08-12 동범 MentorProfile Category삭제 -->
+	<delete id="deleteByAppealNo" parameterType="int">
+		DELETE
+		FROM appeal
+		WHERE appeal_no = #{appealNo}
+	</delete>
+</mapper>

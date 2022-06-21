@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd">
+
+	<!-- DataSource(커넥션풀) 설정 -->
+	<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/oracle"></jee:jndi-lookup>
+
+	<!-- SqlSessionFactory 설정 -->
+	<bean id="sqlSessionFactory"
+	p:configLocation="/WEB-INF/mybatis-config.xml"
+	p:dataSource-ref="dataSource"
+	class="org.mybatis.spring.SqlSessionFactoryBean"/>
+	
+	<!--SqlSession(Template) 설정 -->
+	<bean id="sqlSession"
+	c:sqlSessionFactory-ref="sqlSessionFactory"
+	class="org.mybatis.spring.SqlSessionTemplate"/>
+	
+	<!--- DAO 설정 -->
+	<bean id="agreementDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.AgreementDAOImpl"/>
+	<bean id="appealDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.AppealDAOImpl"/>
+  	<bean id="backgroundDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.BackgroundDAOImpl"/>	  
+	<bean id="banksDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.BanksDAOImpl"/>
+	<bean id="blacklistDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.BlacklistDAOImpl"/>
+  	<bean id="blackReasonsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.BlackReasonsDAOImpl"/>
+	<bean id="careersDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.CareersDAOImpl"/>
+	<bean id="categoryDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.CategoryDAOImpl"/>
+  	<bean id="certificatesDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.CertificatesDAOImpl"/>	
+	<bean id="coursesDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.CoursesDAOImpl"/>
+	<bean id="curriculumsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.CurriculumsDAOImpl"/>
+  	<bean id="dropoutDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.DropoutDAOImpl"/>	  
+	<bean id="dropoutReasonsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.DropoutReasonsDAOImpl"/>
+	<bean id="lessonImgDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.LessonImgDAOImpl"/>
+  	<bean id="lessonsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.LessonsDAOImpl"/>	
+	<bean id="lessonTagsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.LessonTagsDAOImpl"/>		  
+	<bean id="locationDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.LocationDAOImpl"/>
+	<bean id="membersDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.MembersDAOImpl"/>
+  	<bean id="menteeSchedulesDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.MenteeSchedulesDAOImpl"/>
+	<bean id="mentorSchdulesDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.MentorSchedulesDAOImpl"/>	  
+	<bean id="mentorsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.MentorsDAOImpl"/>
+	<bean id="refundReasonsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.RefundReasonsDAOImpl"/>
+  	<bean id="refundsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.RefundsDAOImpl"/>	
+	<bean id="reviewImgsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.ReviewImgsDAOImpl"/>
+	<bean id="reviewsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.ReviewsDAOImpl"/>
+  	<bean id="samplesDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.SamplesDAOImpl"/>
+	<bean id="tagsDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.TagsDAOImpl"/>
+  	<bean id="wishlistDAO"
+		  p:session-ref="sqlSession"
+		  class="com.jbp.djdn.dao.WishlistDAOImpl"/>
+
+		  
+	<!-- Service 설정-->
+	<!-- 2020-08-07 주영 -->
+	<bean id="blacklistService"
+		  p:blacklistDAO-ref="blacklistDAO"
+		  class="com.jbp.djdn.service.BlacklistServiceImpl"/>
+	<bean id="appealService"
+		  p:appealDAO-ref="appealDAO"
+		  class="com.jbp.djdn.service.AppealServiceImpl"/>
+	<bean id="categoryService"
+	         p:categoryDAO-ref="categoryDAO"
+	         class="com.jbp.djdn.service.CategoryServiceImpl"/>
+	<bean id="courseService"
+		  p:lessonTagsDAO-ref="lessonTagsDAO"
+		  p:reviewsDAO-ref="reviewsDAO"
+		  p:menteeSchedulesDAO-ref="menteeSchedulesDAO"
+		  p:blacklistDAO-ref="blacklistDAO"
+		  p:locationDAO-ref="locationDAO"
+		  p:lessonsDAO-ref="lessonsDAO"
+		  p:coursesDAO-ref="coursesDAO"
+		  class="com.jbp.djdn.service.CourseServiceImpl"/>
+	<bean id="lessonService"
+		  p:backgroundDAO-ref="backgroundDAO"
+		  p:tagsDAO-ref="tagsDAO"
+		  p:menteeSchedulesDAO-ref="menteeSchedulesDAO"
+		  p:coursesDAO-ref="coursesDAO"
+		  p:appealDAO-ref="appealDAO"
+		  p:categoryDAO-ref="categoryDAO"
+		  p:mentorsDAO-ref="mentorsDAO"
+		  p:locationDAO-ref="locationDAO"
+		  p:mentorSchdulesDAO-ref="mentorSchdulesDAO"
+		  p:curriculumsDAO-ref="curriculumsDAO"
+		  p:samplesDAO-ref="samplesDAO"
+		  p:reviewImgsDAO-ref="reviewImgsDAO"
+		  p:wishlistDAO-ref="wishlistDAO"
+		  p:lessonTagsDAO-ref="lessonTagsDAO"
+		  p:lessonImgDAO-ref="lessonImgDAO"
+		  p:reviewsDAO-ref="reviewsDAO"
+		  p:lessonsDAO-ref="lessonsDAO"
+		  class="com.jbp.djdn.service.LessonServiceImpl"/>
+	<bean id="memberService"
+		  p:membersDAO-ref="membersDAO"
+		  p:mentorsDAO-ref="mentorsDAO"
+		  p:agreementsDAO-ref="agreementDAO"
+  		  p:dropoutDAO-ref="dropoutDAO"
+		  class="com.jbp.djdn.service.MemberServiceImpl"/>
+	<bean id="mentorService"
+		  p:appealDAO-ref="appealDAO"
+		  p:backgroundDAO-ref="backgroundDAO"
+		  p:lessonsDAO-ref="lessonsDAO"
+		  p:mentorsDAO-ref="mentorsDAO"
+		  p:careersDAO-ref="careersDAO"
+		  p:categoryDAO-ref="categoryDAO"
+		  p:certificatesDAO-ref="certificatesDAO"
+		  p:lessonTagsDAO-ref="lessonTagsDAO"
+		  p:reviewsDAO-ref="reviewsDAO"
+		  class="com.jbp.djdn.service.MentorServiceImpl"/>
+	<!-- //2020-08-08 박혜민 refundeService-->	  
+	<bean id="refundService"
+		  p:reviewsDAO-ref="reviewsDAO"
+		  p:coursesDAO-ref="coursesDAO"
+		  p:refundsDAO-ref="refundsDAO"
+		  class="com.jbp.djdn.service.RefundServiceImpl"/>
+	<!-- 2020-08-08 deleteReview 주현 -->	  
+	<bean id="reviewService"
+		  p:reviewImgsDAO-ref="reviewImgsDAO"
+		  p:reviewsDAO-ref="reviewsDAO"
+		  class="com.jbp.djdn.service.ReviewServiceImpl"/>
+	<bean id="wishlistService"
+		  p:lessonTagsDAO-ref="lessonTagsDAO"
+		  p:reviewsDAO-ref="reviewsDAO"
+		  p:wishlistDAO-ref="wishlistDAO"
+		  class="com.jbp.djdn.service.WishlistServiceImpl"/>
+	
+</beans>

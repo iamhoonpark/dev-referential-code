@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="reviewImgs">
+
+	<!-- 2020-08-12 주영 -->
+	<!-- 리뷰이미지 등록 -->
+	<insert id="insertReviewImg" parameterType="String">
+		INSERT INTO review_imgs(review_img_no,name,review_no,regdate)
+		VALUES(review_imgs_seq.nextval,#{name},reviews_seq.CURRVAL,systimestamp)
+	</insert>
+
+	<!-- 2020-07-31 -->
+	<!-- 2020-08-09 주현 : 리뷰팝업 - 이미지 추가 -->
+	<insert id="insertImg" parameterType="ReviewImg">
+		INSERT INTO review_imgs(review_img_no,name,review_no,regdate)
+		VALUES(review_imgs_seq.nextval,#{name},#{reviewNo},systimestamp)
+	</insert>
+
+	<!--<delete id="deletePopUpImg" parameterType="ReviewImg">
+		DELETE review_imgs
+		WHERE review_no = (SELECT review_no
+		FROM reviews
+		WHERE member_no = #{memberNo} and course_no = #{courseNo})
+	</delete>-->
+
+	<select id="selectListPopupImg" parameterType="ReviewImg" resultType="ReviewImg">
+		SELECT i.name name
+		FROM review_imgs i, reviews r, courses c, lessons l
+		WHERE r.review_no = i.review_no
+		AND r.member_no = c.member_no
+		AND c.member_no = #{memberNo}
+		AND c.course_no = r.course_no 
+		AND l.lesson_no = #{lessonNo}
+	</select>
+
+	<!-- 2020-07-30 -->
+	<select id="selectLessonReviewImgsByReviewNo" parameterType="int" resultType="ReviewImg" >
+		SELECT name
+		FROM review_imgs
+		WHERE review_no = #{reviewNo}
+	</select>
+
+	<!-- 2020-07-29 -->
+	<select id="selectLessonReviewImgs" parameterType="int" resultType="ReviewImg">
+		SELECT i.name name
+		FROM review_imgs i, (SELECT r.review_no reviewNo, r.content content, r.score score, m.nickname nickname, m.profileImg profileImg, r.regdate regdate
+					  FROM reviews r, (SELECT c.course_no
+					  			       FROM lessons l, courses c
+					  				   WHERE l.lesson_no = c.lesson_no
+									   AND l.lesson_no = #{lessonNo}) c, (SELECT member_no, nickname, profile_img profileImg
+															    FROM members) m
+					  WHERE r.course_no = c.course_no
+					  AND r.member_no = m.member_no
+					  ORDER BY 1) r
+		WHERE i.review_no = r.reviewNo
+	</select>
+	
+	<!-- 2020-08-08 주현 수정 -->
+	<delete id="deleteImg" parameterType="int">
+		DELETE FROM review_imgs
+		WHERE review_no = #{reviewNo}
+	</delete>
+
+	<!-- 2020-08-08 selectListImg 주현 -->
+	<select id="selectListImg" parameterType="int"
+		resultType="ReviewImg">
+		SELECT rit.riName name
+		FROM(SELECT c.course_no courseNo, l.title title, r.score score, r.regdate
+		regdate, r.content content, r.review_no reviewNo
+		FROM courses c, lessons l, reviews r
+		WHERE c.lesson_no=l.lesson_no AND r.course_no=c.course_no AND
+		r.member_no=#{no}) rnt,
+		(SELECT ri.name riName, r.review_no rReviewNo
+		FROM reviews r, review_imgs ri
+		WHERE r.review_no = ri.review_no) rit
+		WHERE rnt.reviewNo = rit.rReviewNo
+	</select>
+
+	<!-- <select id="selectListImg" parameterType="int"
+		resultType="ReviewImg">
+		select name
+		from review_imgs i, reviews r, courses c
+		where
+		r.review_no = i.review_no and r.member_no = c.member_no and
+		c.member_no = #{no} and c.course_no = r.course_no
+	</select> -->
+	
+	<!-- 2020-08-09 주현 : 리뷰팝업 - 이미지 삭제 -->
+	<delete id="deletePopUpImg" parameterType="int">
+		DELETE FROM review_imgs
+		WHERE review_img_no = #{reviewImgNo}
+	</delete>
+	
+	<!-- 2020-08-09 리뷰수정팝업 selectList 주현 -->
+	<select id="selectListByReviewNo" parameterType="int" resultType="ReviewImg">
+		SELECT name, review_img_no reviewImgNo
+		FROM review_Imgs
+		WHERE review_no = #{reviewNo}
+	</select>
+
+</mapper>

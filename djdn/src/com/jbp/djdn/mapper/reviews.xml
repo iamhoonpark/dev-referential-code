@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="reviews">
+
+	<!-- 2020-08-12 주영 -->
+	<!-- 리뷰등록 -->
+	<insert id="insertReview" parameterType="Review">
+		INSERT INTO reviews(REVIEW_NO,CONTENT,SCORE,MEMBER_NO,COURSE_NO,REGDATE)
+		VALUES(reviews_seq.nextval, #{content}, #{score}, #{memberNo}, #{courseNo}, systimestamp)
+	</insert>
+
+	<!-- 2020-08-10 임현우 -->
+	<!-- review의 개수,score -->
+	<select id="selectReview" parameterType="int" resultType="Review">
+		SELECT COUNT(*) reviewCount, NVL(AVG(r.score), 0) scoreAVG 
+		FROM reviews r,courses c,lessons l
+		WHERE l.lesson_no=c.lesson_no 
+		AND r.course_no=c.course_no
+		AND l.lesson_no=#{lessonNo}
+	</select>
+
+	<!-- 7/29 
+	<update id="updateReview" parameterType="Review">
+		UPDATE (SELECT r.score score, r.content content, c.lesson_no lessonNo
+		FROM reviews r, courses c
+		WHERE r.member_no = #{memberNo} AND r.course_no = #{courseNo} and r.course_no = c.course_no)
+		SET content = #{content}, score = #{score}
+	</update>-->
+	
+	<!-- 7/28 -->
+	<select id="selectOne" parameterType="Review" resultType="Review">
+		SELECT r.score score, r.content content, l.lesson_no lessonNo, l.title title, c.course_no courseNo,r.review_no reviewNo
+		FROM reviews r, courses c, lessons l
+		WHERE c.member_no = r.member_no
+		AND c.lesson_no = l.lesson_no
+		AND l.lesson_no = #{lessonNo}
+		AND c.member_no = #{memberNo}
+	</select>
+
+	<!-- 2020-07-28 -->
+	<select id="selectLessonReviewTotal" parameterType="int" resultType="int">
+		SELECT count(*)
+		FROM reviews r, (SELECT c.course_no
+					     FROM lessons l, courses c
+						 WHERE l.lesson_no = c.lesson_no
+						 AND l.lesson_no = #{lessonNo}) c, (SELECT member_no, nickname, profile_img profileImg
+												  FROM members) m
+		WHERE r.course_no = c.course_no
+		AND r.member_no = m.member_no
+		ORDER BY 1
+	</select>
+	
+	<select id="selectLessonReviewByLessonNo" parameterType="PageVO" resultType="Review">
+		SELECT reviewNo, content, score, nickname, profileImg, regdate
+		FROM (SELECT reviewNo, content, score, nickname, profileImg, regdate, rownum r
+			  FROM (SELECT r.review_no reviewNo, r.content content, r.score score, m.nickname nickname, m.profileImg profileImg, r.regdate regdate
+			  FROM reviews r, (SELECT c.course_no
+			  			       FROM lessons l, courses c
+			  				   WHERE l.lesson_no = c.lesson_no
+							   AND l.lesson_no = #{no}) c, (SELECT member_no, nickname, profile_img profileImg
+													    FROM members) m
+			  WHERE r.course_no = c.course_no
+			  AND r.member_no = m.member_no
+			  ORDER BY 1))
+		WHERE r BETWEEN #{start} AND #{end}
+	</select>
+
+	<!--2020.07.27  -->
+	<!-- 2020-08-08 주현 수정 -->
+	<delete id="deleteReview" parameterType="int">
+		DELETE FROM reviews
+		WHERE review_no = #{reviewNo}
+	</delete>
+
+	<!-- 2020-08-08 수정됨 주영 -->
+	<select id="selectLessonReviewCountAvg" parameterType="int" resultType="Review">
+		SELECT count(*) count, NVL(AVG(r.score),0) scoreAvg
+		FROM reviews r, courses c, lessons l
+		WHERE r.course_no = c.course_no
+		AND c.lesson_no = l.lesson_no
+		AND l.lesson_no = #{lessonNo} 
+	</select>
+
+	<!-- 2020-07-25 -->
+	<select id="selectLessonThemeScore" parameterType="int" resultType="Review">
+		SELECT AVG(r.score) scoreAvg, COUNT(*) count
+		FROM reviews r, (SELECT c.course_no
+						 FROM courses c, lessons l
+						 WHERE c.lesson_no = l.lesson_no
+						 AND c.lesson_no = #{lessonNo}) c
+	 	WHERE r.course_no = c.course_no
+	</select>
+
+	<!-- 2020-07-30 수정됨 -->
+	<!-- 2020-08-07 selectList 민겸 -->
+	<select id="selectList" parameterType="PageVO"
+		resultType="Review">
+		SELECT courseNo, title, score, regdate, content, reviewNo
+		FROM(SELECT courseNo, title, score, regdate, content, reviewNo, rownum r
+		FROM(SELECT c.course_no courseNo, l.title title, r.score score, r.regdate
+		regdate, r.content content, r.review_no reviewNo
+		FROM courses c, lessons l, reviews r
+		WHERE c.lesson_no=l.lesson_no AND r.course_no=c.course_no AND
+		r.member_no=#{no} ORDER BY r.regdate DESC))
+		WHERE r BETWEEN #{start} AND #{end}
+	</select>
+
+	<select id="selectTotal" parameterType="int" resultType="int">
+		SELECT
+		count(*)
+		FROM reviews WHERE member_no = #{no}
+	</select>
+
+	<!-- 2020.07.28 수정 -->
+	<!-- 한 수업의 별점, 리뷰개수 select -->
+	<select id="selectReviewStar" parameterType="Review" resultType="Review">
+		SELECT count(*) count, avg(score) avgScore
+		FROM reviews
+		WHERE course_no=(SELECT course_no 
+						FROM courses 
+						WHERE member_no=#{memberNo}
+						AND course_no = #{courseNo})
+	</select>
+	
+	<!-- 2020-08-09 리뷰수정팝업 selectOne 주현 -->
+	<select id="selectOneByReviewNo" parameterType="int" resultType="Review">
+		SELECT r.score score, r.content content, r.regdate regdate, l.title title, r.review_no reviewNo
+		FROM reviews r, (SELECT l.lesson_no lessonNo, l.title, c.course_no courseNo
+		FROM courses c, lessons l
+		WHERE c.lesson_no = l.lesson_no) l
+		WHERE r.course_no = l.courseNo
+		AND r.review_no = #{reviewNo}
+	</select>
+	
+	<!-- 2020-08-09 리뷰수정팝업 update(별점, 글) 주현 -->
+	<update id="updateReview" parameterType="Review">
+		UPDATE reviews
+		SET content = #{content}, score = #{score}
+		WHERE review_no = #{reviewNo}
+	</update>
+
+</mapper>

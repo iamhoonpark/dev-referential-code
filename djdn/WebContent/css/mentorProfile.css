@@ -1,0 +1,465 @@
+body, input, button, textarea {
+		font-family: "Noto Sans KR", sans-serif;
+	}
+	
+	body {
+		margin: 0;
+	}
+	
+	ul li {
+		list-style: none;
+		padding: 0;
+	}
+	
+	#wrapper {
+		width: 1080px;
+		padding-top: 100px;
+		padding-bottom: 350px;
+		margin: auto;
+	}
+	
+	.mentor_tit {
+		height: 90px;
+		line-height: 90px;
+		font-weight: bold;
+		font-size: 24px;
+		border-bottom: 1px solid rgb(184, 184, 184);
+	}
+	
+	/* 탭 상단 멘토프로필 */
+	.mentor_introduce_card::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.profile_picture {
+		width: 180px;
+		height: 140px;
+		margin-top: 40px;
+		margin-left: 40px;
+		float: left;
+	}
+	
+	.profile_image {
+		width: 140px;
+		height: 140px;
+		border-radius: 50%;
+	}
+	
+	.mentor_introduce {
+		float: left;
+		margin-top: 40px;
+	}
+	
+	.mentor_introduce_label {
+		float: left;
+	}
+	
+	.mentor_introduce_label li {
+		height: 35px;
+		line-height: 35px;
+		font-weight: 500;
+	}
+	
+	.mentor_introduce_label .nickname {
+		font-weight: bold;
+		font-size: 18px;
+	}
+	
+	.mentor_introduce_data {
+		float: left;
+		margin-left: 20px;
+	}
+	
+	.mentor_introduce_data li {
+		height: 35px;
+		line-height: 35px;
+	}
+	
+	.introduce_change_btn {
+		background-color: #008e97;
+		color: #fff;
+		border: none;
+		cursor: pointer;
+		border-radius: 3px;
+		padding: 2px 4px;
+	}
+	
+	/* 탭 */
+	.category_tab {
+		margin-top: 50px;
+		width: 1080px;
+		height: 55px;
+		line-height: 55px;
+		text-align: center;
+	}
+	
+	.category_tab li {
+		float: left;
+		width: 267px;
+		border: 1px solid rgb(184, 184, 184);
+		cursor: pointer;
+		cursor: pointer;
+	}
+	
+	.on {
+		position: relative;
+		display: inline-block;
+		background-color: #008e97;
+	}
+	
+	.on a {
+		color: #fff;
+	}
+	
+	.on::after {
+		content: "";
+		position: absolute;
+		width: 0;
+		height: 0;
+		border-style: solid;
+		border-color: #008e97 transparent transparent transparent;
+		top: 55px;
+		left: 110px;
+		border-width: 20px 20px;
+		margin: auto;
+	}
+	
+	.category_tab::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.article_plus_contents {
+		margin-top: 50px;
+		display: none;
+	}
+	
+	.article_plus_contents.work {
+		display: block;
+	}
+	
+	.article_plus_contents::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	/* 탭 내용 */
+	.career_article {
+		float: left;
+		width: 140px;
+	}
+	
+	.career_fill_in {
+		float: left;
+		margin-bottom: 100px;
+	}
+	
+	#career {
+		border-bottom: 1px solid rgb(184, 184, 184);
+		margin-top: 30px;
+		padding-bottom: 30px;
+	}
+	
+	#career::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.introduce_myself_article {
+		float: left;
+		width: 140px;
+	}
+	
+	.introduce_fill_in {
+		float: left;
+		line-height: 30px;
+	}
+	
+	#introduceMyself {
+		border-bottom: 1px solid rgb(184, 184, 184);
+		margin-top: 30px;
+		padding-bottom: 30px;
+	}
+	
+	#introduceMyself::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	#classList {
+		border-bottom: 1px solid rgb(184, 184, 184);
+		margin-top: 30px;
+		padding-bottom: 30px;
+		position: relative;
+	}
+	
+	.slide_btn {
+		position: absolute;
+		right: 0;
+		top: -26px;
+	}
+	
+	.slide_left_btn {
+		background-color: transparent;
+		outline: none;
+		border: none;
+		cursor: pointer;
+	}
+	
+	.slide_right_btn {
+		background-color: transparent;
+		outline: none;
+		border: none;
+		cursor: pointer;
+	}
+	
+	#classList::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.class_list_article {
+		float: left;
+		width: 140px;
+	}
+	
+	.class_card_box {
+		width: 930px;
+		height: 200px;
+		overflow: hidden;
+		float: left;
+		position: relative;
+	}
+	
+	.class_card_list {
+		overflow: hidden;
+		transition: 0.5s;
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+	
+	.class_card_list::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.class_card {
+		float: left;
+		width: 250px;
+		height: 200px;
+		margin-right: 60px;
+	}
+	
+	.button {
+		width: 220px;
+		margin: auto;
+		margin-top: 60px;
+		padding-bottom: 50px;
+	}
+	
+	.cancel_btn {
+		width: 100px;
+		height: 40px;
+		cursor: pointer;
+		background-color: #008e97;
+		outline-color: #008e97;
+		color: #fff;
+		border: none;
+		border-radius: 2px;
+	}
+	
+	.okay_btn {
+		width: 100px;
+		height: 40px;
+		margin-left: 10px;
+		cursor: pointer;
+		background-color: #008e97;
+		outline-color: #008e97;
+		color: #fff;
+		border: none;
+		border-radius: 2px;
+	}
+	
+	/* 카테고리 추가탭 */
+	.plustab_category_article {
+		float: left;
+		width: 140px;
+	}
+	
+	.plustab_categories {
+		float: left;
+		width: 800px;
+	}
+	
+	#plustabCategory {
+		border-bottom: 1px solid rgb(184, 184, 184);
+		margin-top: 30px;
+		padding-bottom: 30px;
+	}
+	
+	#plustabCategory::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.plustab_categories input {
+		display: none;
+	}
+	
+	.plustab_categories input:checked+label {
+		border: 2px solid #008e97;
+		color: #008e97;
+	}
+	
+	.label {
+		display: inline-block;
+		border-radius: 3px;
+		border: 1px solid rgb(184, 184, 184);
+		cursor: pointer;
+		margin-bottom: 18px;
+		margin-right: 10px;
+		padding: 5px 7px;
+	}
+	
+	#plustabCertificate {
+		border-bottom: 1px solid rgb(184, 184, 184);
+		margin-top: 30px;
+		padding-bottom: 30px;
+	}
+	
+	#plustabCertificate label {
+		margin-right: 20px;
+	}
+	
+	#plustabCertificate input {
+		margin-right: 60px;
+	}
+	
+	#plustabCertificate::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.plustab_certificate_article {
+		float: left;
+		width: 140px;
+	}
+	
+	.plustab_certificate_fill_in {
+		float: left;
+	}
+	
+	.certificate_plus_btn {
+		margin-top: 30px;
+		margin-left: 300px;
+		width: 60px;
+		height: 30px;
+		background-color: #008e97;
+		cursor: pointer;
+		color: #fff;
+		outline: none;
+		border: none;
+		border-radius: 3px;
+	}
+	
+	#plustabCareer {
+		border-bottom: 1px solid rgb(184, 184, 184);
+		margin-top: 30px;
+		padding-bottom: 30px;
+	}
+	
+	#plustabCareer label {
+		margin-right: 20px;
+	}
+	
+	#plustabCareer input {
+		margin-right: 60px;
+	}
+	
+	#plustabCareer::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.plustab_career_article {
+		float: left;
+		width: 140px;
+	}
+	
+	.plustab_career_fill_in {
+		float: left;
+		margin-bottom: 10px;
+		width: 800px;
+	}
+	
+	.career_plus_btn {
+		margin-top: 30px;
+		margin-left: 300px;
+		width: 60px;
+		height: 30px;
+		background-color: #008e97;
+		cursor: pointer;
+		color: #fff;
+		outline: none;
+		border: none;
+		border-radius: 3px;
+	}
+	
+	.plustab_introduce_myself_article {
+		float: left;
+		width: 140px;
+	}
+	
+	.plustab_introduce_fill_in {
+		float: left;
+	}
+	
+	.introduce_txt {
+		padding: 10px;
+		width: 780px;
+		height: 140px;
+		resize: none;
+		outline-color: #008e97;
+		border-radius: 2px;
+	}
+	
+	#plustabIntroduce {
+		border-bottom: 1px solid rgb(184, 184, 184);
+		margin-top: 30px;
+		padding-bottom: 30px;
+	}
+	
+	#plustabIntroduce::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+	
+	.register {
+		width: 1080px;
+		margin: auto;
+		text-align: center;
+	}
+	
+	.register_btn {
+		height: 40px;
+		width: 100px;
+		margin-top: 50px;
+		outline: none;
+		border-radius: 3px;
+		border: none;
+		background-color: rgb(127, 127, 127);
+		color: #fff;
+	}

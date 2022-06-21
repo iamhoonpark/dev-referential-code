@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC	
+"-//mybatis.org//DTD Mapper 3.0//EN"	
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="careers">
+	<!-- 2020-08-10 동범 mentor career 입력 -->
+	<insert id="insertMentorCareers" parameterType="Career">
+		INSERT INTO careers
+		VALUES(careers_seq.nextval, #{company}, 'L' , #{hireDate}, #{leaveDate}, #{task}, #{appealNo}, systimestamp)
+	</insert>
+	
+	<!-- 2020-08-12 동범 MentorProfile Category삭제 -->
+	<delete id="deleteByAppealNo" parameterType="int">
+		DELETE
+		FROM careers
+		WHERE appeal_no = #{appealNo}
+	</delete>
+	
+
+</mapper>
